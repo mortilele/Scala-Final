@@ -17,4 +17,9 @@ object Main{
     }
     val system = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
   }
+//  TODO: CollectorActor has to save state in Cassandra
+//  TODO: Kafka topic partition
+//  TODO: Dynamic adding/removing NotificationActor
+//  TODO: Clustering Combine ActorSystems
+//  TODO: Implement UserNotificationActor to response User Request
 }

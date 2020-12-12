@@ -3,7 +3,7 @@ import scala.util.matching.Regex
 case object NotificationType extends Enumeration {
   protected case class Val(pattern: Regex) extends super.Val {
     def isPatternMatched(text: String): Boolean = pattern.findFirstIn(text) match {
-      case Some(value) => true
+      case Some(_) => true
       case None => false
     }
   }
