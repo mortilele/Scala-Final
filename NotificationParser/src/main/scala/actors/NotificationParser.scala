@@ -1,9 +1,15 @@
-import Collector.NotificationParsed
+package actors
+
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import dao.Collector.NotificationParsed
+import enums.NotificationType
+import models.Notification
 
 object NotificationParser {
+
   sealed trait Command
+
   case class GetRawNotification(notification: Notification, replyTo: ActorRef[NotificationParsed]) extends Command
 
   def apply(): Behavior[Command] = parse()

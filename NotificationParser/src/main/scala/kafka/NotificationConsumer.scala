@@ -1,22 +1,27 @@
-import Collector.NotificationParsed
-import NotificationParser.GetRawNotification
+package kafka
+
+import actors.NotificationParser
+import actors.NotificationParser.GetRawNotification
 import akka.actor.ActorSystem
-import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import akka.kafka._
+import akka.actor.typed.{ActorRef, Behavior}
 import akka.kafka.scaladsl.Consumer
 import akka.kafka.scaladsl.Consumer.DrainingControl
+import akka.kafka.{ConsumerSettings, Subscriptions}
 import akka.stream.scaladsl.Sink
-import io.circe.generic.decoding.DerivedDecoder.deriveDecoder
-import io.circe.parser._
+import io.circe.parser.decode
+import models.Notification
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
+import dao.Collector.NotificationParsed
+import io.circe.generic.decoding.DerivedDecoder.deriveDecoder
 
 import scala.concurrent.ExecutionContextExecutor
 
 object NotificationConsumer {
 
   sealed trait Command
+
   final case class startJob(replyTo: ActorRef[NotificationParsed]) extends Command
 
   implicit val system: ActorSystem = ActorSystem("Consumer1")
@@ -36,6 +41,7 @@ object NotificationConsumer {
             .withGroupId("notifications-consumer")
             .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
+          // TODO: read by partition
           val consumer = Consumer
             .committableSource(consumerSettings, Subscriptions.topics(topic))
             .map { consumerMessage =>
@@ -54,9 +60,6 @@ object NotificationConsumer {
     }
 
   }
-
-
-
 
 
 }

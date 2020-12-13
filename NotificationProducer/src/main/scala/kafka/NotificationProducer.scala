@@ -21,6 +21,7 @@ class NotificationProducer(messages: Seq[String])(implicit system: ActorSystem[_
   val config: Config = system.settings.config.getConfig("akka.kafka.producer")
   val server: String = system.settings.config.getString("akka.kafka.producer.kafka-clients.server")
   val topic: String = system.settings.config.getString("akka.kafka.producer.kafka-clients.topic")
+  var partitionOffset = 0
 
   val generator: Random.type = scala.util.Random
 
@@ -36,7 +37,8 @@ class NotificationProducer(messages: Seq[String])(implicit system: ActorSystem[_
 
 
   def produce(): Unit = {
-
+  // Round-robin partitions[0..2]
+    partitionOffset = (partitionOffset + 1) % 3
     val done: Future[Done] = {
       Source.single(getRandomNotification)
         .map(value => new ProducerRecord[String, String](topic, value.asJson.toString()))

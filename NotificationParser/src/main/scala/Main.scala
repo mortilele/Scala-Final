@@ -1,7 +1,11 @@
-import NotificationConsumer.startJob
+import kafka.NotificationConsumer.startJob
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
+import dao.Collector
+import http.HttpServer
+import kafka.NotificationConsumer
 import org.slf4j.{Logger, LoggerFactory}
+import routes.NotificationRoutes
 
 import scala.util.Try
 
@@ -21,8 +25,10 @@ object Main{
 
       HttpServer.startHttpServer(router.route, host, port)(context.system, context.executionContext)
 
-      val notificationConsumer = context.spawn(NotificationConsumer(), "Consumer")
-      notificationConsumer ! startJob(collectorActor)
+      for (i <- 0 to 2) {
+        val notificationConsumer = context.spawn(NotificationConsumer(), s"Consumer$i")
+        notificationConsumer ! startJob(collectorActor)
+      }
 
       Behaviors.empty
     }

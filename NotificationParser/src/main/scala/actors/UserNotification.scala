@@ -1,12 +1,17 @@
-import akka.actor.typed.{ActorRef, Behavior}
+package actors
+
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ActorRef, Behavior}
+import models.Notification
 
 object UserNotification {
 
   sealed trait Command
+
   case class ExtractUserNotifications(userId: Int, notifications: Seq[Notification], replyTo: ActorRef[GetUserResponse]) extends Command
 
   sealed trait Event
+
   final case class GetUserResponse(notifications: Seq[Notification]) extends Event
 
   def apply(): Behavior[Command] = {
@@ -16,7 +21,6 @@ object UserNotification {
         Behaviors.stopped
     }
   }
-
 
 
 }
