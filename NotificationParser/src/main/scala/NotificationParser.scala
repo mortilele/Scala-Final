@@ -8,7 +8,7 @@ object NotificationParser {
 
   def apply(): Behavior[Command] = parse()
 
-  private def parse(): Behavior[Command] =
+  private def parse(): Behavior[Command] = {
     Behaviors.receiveMessage {
       case GetRawNotification(notification, replyTo) =>
         replyTo ! NotificationParsed(NotificationType.values.find(_.isPatternMatched(notification.body)) match {
@@ -17,4 +17,5 @@ object NotificationParser {
         }, notification)
         Behaviors.same
     }
+  }
 }

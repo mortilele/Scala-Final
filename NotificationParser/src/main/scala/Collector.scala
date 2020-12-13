@@ -17,7 +17,7 @@ object Collector {
       case GetUserNotifications(userId, notificationType, replyTo) =>
         Behaviors.setup[Command] { context =>
           val userNotification = context.spawn(UserNotification(), s"UserNotification$userId")
-          userNotification ! UserNotification.ExtractUserNotifications(userId, map(notificationType), replyTo)
+          userNotification ! UserNotification.ExtractUserNotifications(userId, map.getOrElse(notificationType, Seq.empty), replyTo)
           Behaviors.same
         }
     }

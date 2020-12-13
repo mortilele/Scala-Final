@@ -1,4 +1,4 @@
-import NotificationParser.GetRawNotification
+import NotificationConsumer.startJob
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import org.slf4j.{Logger, LoggerFactory}
@@ -10,9 +10,8 @@ object Main{
     implicit val log: Logger = LoggerFactory.getLogger(getClass)
 
     val rootBehavior = Behaviors.setup[Nothing] { context =>
-      val notificationParserActor = context.spawn(NotificationParser(), "NotificationParser")
       val collectorActor = context.spawn(Collector(), "NotificationTypesCollector")
-      context.watch(notificationParserActor)
+      context.watch(collectorActor)
 
 
       val router = new NotificationRoutes(collectorActor)(context.system, context.executionContext)
@@ -21,18 +20,29 @@ object Main{
       val port = Try(System.getenv("PORT")).map(_.toInt).getOrElse(8080)
 
       HttpServer.startHttpServer(router.route, host, port)(context.system, context.executionContext)
-      notificationParserActor ! GetRawNotification(Notification("Get Discounts specific for u", 2), collectorActor)
-      notificationParserActor ! GetRawNotification(Notification("Get Discounts specific for u", 1), collectorActor)
-      notificationParserActor ! GetRawNotification(Notification("Some interesting", 2), collectorActor)
-      notificationParserActor ! GetRawNotification(Notification("Get Personal Discount for u", 2), collectorActor)
-      notificationParserActor ! GetRawNotification(Notification("Global news!", 5), collectorActor)
+
+      val notificationConsumer = context.spawn(NotificationConsumer(), "Consumer")
+      notificationConsumer ! startJob(collectorActor)
+
       Behaviors.empty
     }
-    val system = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
+    implicit val system: ActorSystem[Nothing] = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
   }
 //  TODO: CollectorActor has to save state in Cassandra
 //  TODO: Kafka topic partition
-//  TODO: Dynamic adding/removing NotificationActor
+    /*
+    """
+    Producer partition rule
+    Consumers in one Group
+    Consumers read messages by partition
+    """
+    */
 //  TODO: Clustering Combine ActorSystems
-//  TODO: UserNotificationActor save state until 30 seconds, die if didn't receive messages
+//  TODO: UserNotificationActor save state until 30 seconds, die if didn't receive messages (via Receptionist)
+    /*
+    """
+
+    """
+    */
+//  TODO: NotificationProducer /messages/ GET, POST request, /send_notification/ POST
 }

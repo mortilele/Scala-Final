@@ -30,7 +30,7 @@ class NotificationProducer(messages: Seq[String])(implicit system: ActorSystem[_
 
   def getRandomNotification: Notification = {
     val notificationBody = messages(generator.nextInt(messages.length))
-    val userId = generator.nextInt(10)
+    val userId = generator.nextInt(2)
     Notification(notificationBody, userId)
   }
 
