@@ -1,7 +1,8 @@
 package utils
-import java.io._
 
+import java.io._
 import scala.io.Source
+
 object FileUtil {
 
   def readFile(fileName: String): Seq[String] = {

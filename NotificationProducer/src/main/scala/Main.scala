@@ -1,20 +1,26 @@
 import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.scaladsl.{Behaviors, Routers}
 import kafka.NotificationProducer
 import org.slf4j.{Logger, LoggerFactory}
-import utils.FileUtil
+import server.{HttpServer, Node, ProducerRoutes}
 
 object Main extends App {
   implicit val log: Logger = LoggerFactory.getLogger(getClass)
-  val fileName = "messages.txt"
-
-  val fileContent = FileUtil.readFile(fileName)
   val rootBehavior = Behaviors.setup[Nothing] { context =>
 
+    val publisher = new NotificationProducer()(context.system, context.executionContext)
+    context.spawnAnonymous(Node(publisher))
+
+    val group = Routers.group(Node.NodeServiceKey)
+    val node = context.spawnAnonymous(group)
+
+    val router = new ProducerRoutes(node)(context.system, context.executionContext)
+    val host = "localhost"
+    val port = 9000
+    HttpServer.startHttpServer(router.route, host, port)(context.system, context.executionContext)
 
 
-    val publisher = new NotificationProducer(fileContent)(context.system, context.executionContext)
-    publisher.startSendingMessages()
+//    publisher.startSendingMessages()
     Behaviors.empty
   }
 
