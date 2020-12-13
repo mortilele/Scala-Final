@@ -1,5 +1,4 @@
-
-name := "NotificationParser"
+name := "NotificationProducer"
 
 version := "0.1"
 
@@ -8,6 +7,7 @@ scalaVersion := "2.13.4"
 val akkaVersion = "2.6.10"
 lazy val akkaHttpVersion = "10.2.1"
 val circeVersion = "0.13.0"
+
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed"           % akkaVersion,
@@ -26,9 +26,9 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser" % circeVersion,
 
-
   "de.heikoseeberger" %% "akka-http-circe" % "1.31.0"
 )
-enablePlugins(JavaAppPackaging)
-enablePlugins(DockerPlugin)
-enablePlugins(AshScriptPlugin)
+
+
+
+

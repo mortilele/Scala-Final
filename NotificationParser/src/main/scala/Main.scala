@@ -34,5 +34,5 @@ object Main{
 //  TODO: Kafka topic partition
 //  TODO: Dynamic adding/removing NotificationActor
 //  TODO: Clustering Combine ActorSystems
-//  TODO: Implement UserNotificationActor to response User Request
+//  TODO: UserNotificationActor save state until 30 seconds, die if didn't receive messages
 }
