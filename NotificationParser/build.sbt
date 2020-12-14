@@ -3,7 +3,7 @@ name := "NotificationParser"
 
 version := "0.1"
 
-scalaVersion := "2.13.4"
+scalaVersion := "2.12.12"
 
 val akkaVersion = "2.6.10"
 lazy val akkaHttpVersion = "10.2.1"
@@ -42,3 +42,10 @@ enablePlugins(DockerPlugin)
 enablePlugins(AshScriptPlugin)
 
 resolvers += Resolver.bintrayRepo("akka", "snapshots")
+enablePlugins(GatlingPlugin)
+scalacOptions := Seq(
+  "-encoding", "UTF-8", "-target:jvm-1.8", "-deprecation",
+  "-feature", "-unchecked", "-language:implicitConversions", "-language:postfixOps")
+val gatlingVersion = "3.4.2"
+libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion % "test,it"
+libraryDependencies += "io.gatling"            % "gatling-test-framework"    % gatlingVersion % "test,it"
