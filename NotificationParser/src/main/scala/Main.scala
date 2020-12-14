@@ -1,9 +1,9 @@
-import kafka.NotificationConsumer.startJob
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import dao.Collector
 import http.HttpServer
 import kafka.NotificationConsumer
+import kafka.NotificationConsumer.startJob
 import org.slf4j.{Logger, LoggerFactory}
 import routes.NotificationRoutes
 
@@ -34,15 +34,6 @@ object Main{
     }
     implicit val system: ActorSystem[Nothing] = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
   }
-//  TODO: CollectorActor has to save state in Cassandra
-//  TODO: Kafka topic partition
-    /*
-    """
-    Producer partition rule
-    Consumers in one Group
-    Consumers read messages by partition
-    """
-    */
 //  TODO: Clustering Combine ActorSystems
 //  TODO: UserNotificationActor save state until 30 seconds, die if didn't receive messages (via Receptionist)
     /*
@@ -50,5 +41,5 @@ object Main{
 
     """
     */
-//  TODO: NotificationProducer /messages/ GET, POST request, /send_notification/ POST
+//  TODO: Testing via Gatling
 }

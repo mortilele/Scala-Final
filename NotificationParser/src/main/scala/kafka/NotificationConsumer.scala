@@ -5,15 +5,15 @@ import actors.NotificationParser.GetRawNotification
 import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import akka.kafka.scaladsl.Consumer
+import akka.kafka.scaladsl.{Committer, Consumer}
 import akka.kafka.scaladsl.Consumer.DrainingControl
-import akka.kafka.{ConsumerSettings, Subscriptions}
+import akka.kafka.{CommitterSettings, ConsumerSettings, Subscriptions}
 import akka.stream.scaladsl.Sink
 import io.circe.parser.decode
 import models.Notification
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
-import dao.Collector.NotificationParsed
+import dao.Collector.CollectParsedNotifications
 import io.circe.generic.decoding.DerivedDecoder.deriveDecoder
 
 import scala.concurrent.ExecutionContextExecutor
@@ -22,7 +22,7 @@ object NotificationConsumer {
 
   sealed trait Command
 
-  final case class startJob(replyTo: ActorRef[NotificationParsed]) extends Command
+  final case class startJob(replyTo: ActorRef[CollectParsedNotifications]) extends Command
 
   implicit val system: ActorSystem = ActorSystem("Consumer1")
   implicit val ec: ExecutionContextExecutor = system.dispatcher
@@ -40,20 +40,28 @@ object NotificationConsumer {
             .withBootstrapServers(bootstrapServers)
             .withGroupId("notifications-consumer")
             .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+          val committerSettings = CommitterSettings(system)
 
-          // TODO: read by partition
-          val consumer = Consumer
-            .committableSource(consumerSettings, Subscriptions.topics(topic))
-            .map { consumerMessage =>
-              val value = consumerMessage.record.value()
-              val notification = decode[Notification](value)
-              notification match {
-                case Right(notificationObject) =>
-                  notificationParserActor ! GetRawNotification(notificationObject, replyTo)
-                case Left(ex) => println(s"Ooops some errror here ${ex}")
-              }
+
+          // Stream for each partition
+          val control = Consumer
+            .committablePartitionedSource(consumerSettings, Subscriptions.topics(topic))
+            .mapAsyncUnordered(3) {
+              case (topicPartition, source) =>
+                source
+                  .map { consumerMessage =>
+                    val value = consumerMessage.record.value()
+                    val notification = decode[Notification](value)
+                    notification match {
+                      case Right(notificationObject) =>
+                        notificationParserActor ! GetRawNotification(notificationObject, replyTo)
+                      case Left(ex) => println(s"Ooops some errror here ${ex}")
+                    }
+                    consumerMessage.committableOffset
+                  }
+                  .runWith(Committer.sink(committerSettings))
             }
-            .toMat(Sink.seq)(DrainingControl.apply)
+            .toMat(Sink.ignore)(DrainingControl.apply)
             .run()
           Behaviors.same
       }

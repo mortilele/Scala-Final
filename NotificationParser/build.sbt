@@ -12,10 +12,17 @@ val circeVersion = "0.13.0"
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed"           % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-typed"         % akkaVersion,
-
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+
   "com.typesafe.akka" %% "akka-stream-kafka" % "2.0.5",
+
+
+  "com.typesafe.akka" %% "akka-persistence-cassandra" % "1.0.4",
+  "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-typed" % akkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-query" % akkaVersion,
+  "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
 
   "ch.qos.logback"    %  "logback-classic"             % "1.2.3",
   "com.typesafe.akka" %% "akka-multi-node-testkit"    % akkaVersion % Test,
@@ -27,8 +34,11 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % circeVersion,
 
 
+
   "de.heikoseeberger" %% "akka-http-circe" % "1.31.0"
 )
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
 enablePlugins(AshScriptPlugin)
+
+resolvers += Resolver.bintrayRepo("akka", "snapshots")
