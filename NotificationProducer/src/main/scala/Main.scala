@@ -1,5 +1,5 @@
 import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.{Behaviors, Routers}
+import akka.actor.typed.scaladsl.Behaviors
 import kafka.NotificationProducer
 import org.slf4j.{Logger, LoggerFactory}
 import server.{HttpServer, Node, ProducerRoutes}
@@ -9,10 +9,7 @@ object Main extends App {
   val rootBehavior = Behaviors.setup[Nothing] { context =>
 
     val publisher = new NotificationProducer()(context.system, context.executionContext)
-    context.spawnAnonymous(Node(publisher))
-
-    val group = Routers.group(Node.NodeServiceKey)
-    val node = context.spawnAnonymous(group)
+    val node = context.spawnAnonymous(Node(publisher))
 
     val router = new ProducerRoutes(node)(context.system, context.executionContext)
     val host = "localhost"

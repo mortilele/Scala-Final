@@ -81,6 +81,7 @@ class NotificationProducer()(implicit system: ActorSystem[_], ex: ExecutionConte
 
   def addMessage(body: String): Unit = {
     FileUtil.writeFile(fileName, body)
+    messages = messages :+ body
   }
 
   startSendingMessages()

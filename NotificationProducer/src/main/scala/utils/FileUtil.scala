@@ -14,9 +14,9 @@ object FileUtil {
 
   def writeFile(fileName: String, data: String): Unit = {
     val file = new File(fileName)
-    val bw = new BufferedWriter(new FileWriter(file))
+    val bw = new BufferedWriter(new FileWriter(file, true))
     try {
-      bw.write(data)
+      bw.write(s"\n$data")
 
     } finally {
       bw.close()
