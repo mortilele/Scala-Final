@@ -18,6 +18,7 @@ The project is that we have a service that sends raw notifications, another serv
 - [x] HTTP Server Notifications Service
   - [x] GET /notifications/<user_id>/<notification_type>, get notifications of user filtered notification type
 - [ ] If the client sends a request again within 30 seconds, then the data should not just be read again, but return the old data + (new notifications that could appear in the last 30 seconds)
+- [x] App covered by Gatling Tests
 - [x] Collector Actor must reload state from Cassandra
 
 ## Contributors:
