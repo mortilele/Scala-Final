@@ -1,7 +1,8 @@
 package utils
-import java.io._
 
+import java.io._
 import scala.io.Source
+
 object FileUtil {
 
   def readFile(fileName: String): Seq[String] = {
@@ -13,9 +14,9 @@ object FileUtil {
 
   def writeFile(fileName: String, data: String): Unit = {
     val file = new File(fileName)
-    val bw = new BufferedWriter(new FileWriter(file))
+    val bw = new BufferedWriter(new FileWriter(file, true))
     try {
-      bw.write(data)
+      bw.write(s"\n$data")
 
     } finally {
       bw.close()
