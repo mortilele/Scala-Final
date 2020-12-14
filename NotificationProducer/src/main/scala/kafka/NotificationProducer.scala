@@ -44,7 +44,7 @@ class NotificationProducer()(implicit system: ActorSystem[_], ex: ExecutionConte
     partitionOffset = (partitionOffset + 1) % 3
     val done: Future[Done] = {
       Source.single(getRandomNotification)
-        .map(value => new ProducerRecord[String, String](topic, value.asJson.toString()))
+        .map(value => new ProducerRecord[String, String](topic, partitionOffset, "keee", value.asJson.toString()))
         .runWith(Producer.plainSink(producerSettings))
     }
 
@@ -67,7 +67,7 @@ class NotificationProducer()(implicit system: ActorSystem[_], ex: ExecutionConte
   def sendOneMessage(userId: Int, messageId: Int): Unit = {
     val singleMessage: Future[Done] = {
       Source.single(Notification(messages(messageId), userId))
-        .map(value => new ProducerRecord[String, String](topic, value.asJson.toString()))
+        .map(value => new ProducerRecord[String, String](topic, partitionOffset, "NotificationsKey", value.asJson.toString()))
         .runWith(Producer.plainSink(producerSettings))
     }
 

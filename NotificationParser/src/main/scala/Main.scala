@@ -2,6 +2,8 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import dao.Collector
 import http.HttpServer
+import kafka.NotificationConsumer
+import kafka.NotificationConsumer.startJob
 import org.slf4j.{Logger, LoggerFactory}
 import routes.NotificationRoutes
 
@@ -23,23 +25,15 @@ object Main{
 
       HttpServer.startHttpServer(router.route, host, port)(context.system, context.executionContext)
 
-//      for (i <- 0 to 0) {
-//        val notificationConsumer = context.spawn(NotificationConsumer(), s"Consumer$i")
-//        notificationConsumer ! startJob(collectorActor)
-//      }
+      for (i <- 0 to 2) {
+        val notificationConsumer = context.spawn(NotificationConsumer(), s"Consumer$i")
+        notificationConsumer ! startJob(collectorActor)
+      }
 
       Behaviors.empty
     }
     implicit val system: ActorSystem[Nothing] = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
   }
-//  TODO: Kafka topic partition
-    /*
-    """
-    Producer partition rule
-    Consumers in one Group
-    Consumers read messages by partition
-    """
-    */
 //  TODO: Clustering Combine ActorSystems
 //  TODO: UserNotificationActor save state until 30 seconds, die if didn't receive messages (via Receptionist)
     /*
@@ -47,4 +41,5 @@ object Main{
 
     """
     */
+//  TODO: Testing via Gatling
 }
