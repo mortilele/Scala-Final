@@ -1,3 +1,4 @@
+enablePlugins(GatlingPlugin)
 name := "NotificationProducer"
 
 version := "0.1"
@@ -7,7 +8,9 @@ scalaVersion := "2.13.4"
 val akkaVersion = "2.6.10"
 lazy val akkaHttpVersion = "10.2.1"
 val circeVersion = "0.13.0"
-
+val gatlingVersion = "3.4.2"s
+libraryDependencies += "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion % "test,it"
+libraryDependencies += "io.gatling"            % "gatling-test-framework"    % gatlingVersion % "test,it"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed"           % akkaVersion,
