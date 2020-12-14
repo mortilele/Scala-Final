@@ -44,7 +44,7 @@ class NotificationProducer()(implicit system: ActorSystem[_], ex: ExecutionConte
     partitionOffset = (partitionOffset + 1) % 3
     val done: Future[Done] = {
       Source.single(getRandomNotification)
-        .map(value => new ProducerRecord[String, String](topic, partitionOffset, "keee", value.asJson.toString()))
+        .map(value => new ProducerRecord[String, String](topic, partitionOffset, "NotificationsKey", value.asJson.toString()))
         .runWith(Producer.plainSink(producerSettings))
     }
 
