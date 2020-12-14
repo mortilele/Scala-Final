@@ -65,6 +65,8 @@ class NotificationProducer()(implicit system: ActorSystem[_], ex: ExecutionConte
   }
 
   def sendOneMessage(userId: Int, messageId: Int): Unit = {
+    // Round-robin partitions[0..2]
+    partitionOffset = (partitionOffset + 1) % 3
     val singleMessage: Future[Done] = {
       Source.single(Notification(messages(messageId), userId))
         .map(value => new ProducerRecord[String, String](topic, partitionOffset, "NotificationsKey", value.asJson.toString()))

@@ -17,7 +17,7 @@ object Main extends App {
     HttpServer.startHttpServer(router.route, host, port)(context.system, context.executionContext)
 
 
-    publisher.startSendingMessages()
+//    publisher.startSendingMessages()
     Behaviors.empty
   }
 
