@@ -1,10 +1,10 @@
-# Scala-Final :two_men_holding_hands:
+# Scala-Final :cloud:
 ## Description:
 Group Project developed during Scala learning
 The project is that we have a service that sends raw notifications, another service must process notifications and group them into notification types, then, there is GET request in which need to pull out the notification of a specific user from the notification group.
 
 ## Tasks:
-- [x] HTTP Server Producer
+- [x] HTTP Server Notification Producer
   - [x] GET messages
   - [x] POST new message
   - [x] POST send message to user
