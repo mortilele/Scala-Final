@@ -13,7 +13,7 @@ import io.circe.parser.decode
 import models.Notification
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
-import dao.Collector.NotificationParsed
+import dao.Collector.CollectParsedNotifications
 import io.circe.generic.decoding.DerivedDecoder.deriveDecoder
 
 import scala.concurrent.ExecutionContextExecutor
@@ -22,7 +22,7 @@ object NotificationConsumer {
 
   sealed trait Command
 
-  final case class startJob(replyTo: ActorRef[NotificationParsed]) extends Command
+  final case class startJob(replyTo: ActorRef[CollectParsedNotifications]) extends Command
 
   implicit val system: ActorSystem = ActorSystem("Consumer1")
   implicit val ec: ExecutionContextExecutor = system.dispatcher
