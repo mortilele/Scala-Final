@@ -1,7 +1,6 @@
 package consumerTests
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
-import scala.concurrent.duration._
 class BasicSimulation extends Simulation {
 
   val httpProtocol = http
@@ -19,7 +18,7 @@ class BasicSimulation extends Simulation {
       .get("notifications/1/news"))
     .pause(7) // Note that Gatling has recorder real time pauses
     .exec(http("request_getPersonal")
-      .get("notifications/1/news"))
+      .get("notifications/1/personal"))
     .pause(7) // Note that Gatling has recorder real time pauses
     
 

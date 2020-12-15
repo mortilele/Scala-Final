@@ -26,7 +26,7 @@ object Collector {
 
   def apply(): Behavior[Command] =
     EventSourcedBehavior[Command, Event, State](
-      persistenceId = PersistenceId.ofUniqueId("collector"),
+      persistenceId = PersistenceId.ofUniqueId("collector2"),
       emptyState = State(),
       commandHandler = commandHandler,
       eventHandler = eventHandler

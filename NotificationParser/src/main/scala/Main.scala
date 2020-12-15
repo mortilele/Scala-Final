@@ -25,10 +25,8 @@ object Main{
 
       HttpServer.startHttpServer(router.route, host, port)(context.system, context.executionContext)
 
-      for (i <- 0 to 2) {
-        val notificationConsumer = context.spawn(NotificationConsumer(), s"Consumer$i")
-        notificationConsumer ! startJob(collectorActor)
-      }
+      val notificationConsumer = context.spawn(NotificationConsumer(), s"Consumer")
+      notificationConsumer ! startJob(collectorActor)
 
       Behaviors.empty
     }
@@ -41,5 +39,4 @@ object Main{
 
     """
     */
-//  TODO: Testing via Gatling
 }
